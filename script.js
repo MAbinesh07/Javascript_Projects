@@ -1,42 +1,36 @@
-const searchForm =document.getElementById("search-form");
-const searchBox =document.getElementById("search-box");
-const searchResult =document.getElementById("search-result");
-const showMoreBtn =document.getElementById("show-more-btn");
+const inputBox = document.getElementById('input-box');
+const listContainer = document.getElementById('list-container');
 
-const accessKey = 'EduAngZ_L3PSKIZiDLBQ2O5-pz_LTyQgJ5AtRrJtkfo';
-let keyword = "";
-let page = 1;
-
-async function searchImages(){
-    keyword = searchBox.value;
-    const url =  `https://api.unsplash.com/search/photos?page=${page}&query=${keyword}&client_id=${accessKey}&per_page=12`;
-    const respose = await fetch(url);
-    const data = await respose.json();
-
-    const results= data.results;
-
-    if(page===1){
-        searchResult.innerHTML="";
+function addTask(){
+    if(inputBox.value ===''){
+        alert("You must write something!")
     }
-
-    results.map((result) =>{
-        const image = document.createElement("img");
-        image.src= result.urls.small;
-        const imageLink = document.createElement("a");
-        imageLink.href = result.links.html;
-        imageLink.target ="_blank";
-        imageLink.appendChild(image);
-        searchResult.appendChild(imageLink);
-    })
-    showMoreBtn.style.display="block";
+    else{
+        let li = document.createElement("li");
+        li.innerHTML = inputBox.value;
+        listContainer.appendChild(li);
+        let span = document.createElement("span");
+        span.innerHTML ="&times;"
+        li.appendChild(span);
+    }
+    inputBox.value =""; 
+    saveData(); 
 }
 
-searchForm.addEventListener("submit", (e)=>{
-    e.preventDefault();
-    page = 1;
-    searchImages();
-})
-showMoreBtn.addEventListener("click", ()=>{
-    page++;
-    searchImages();
-})
+listContainer.addEventListener("click", function(e){
+    if(e.target.tagName === "LI"){
+        e.target.classList.toggle("checked");
+        saveData();
+    }
+    else if(e.target.tagName==="SPAN"){
+        e.target.parentElement.remove();
+        saveData();
+    }
+ },false);
+
+ function saveData(){
+    localStorage.setItem("data",listContainer.innerHTML)
+ }
+ function showTask(){
+    listContainer.innerHTML=localStorage.getItem("data");}
+    showTask();
